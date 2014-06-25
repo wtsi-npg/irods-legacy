@@ -57,4 +57,4 @@ deploy:
 
 branches:
   only:
-  - travis-build-deploy
+  - travis-build
