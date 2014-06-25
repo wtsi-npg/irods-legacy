@@ -19,11 +19,13 @@ before_script:
   - sudo -E -u postgres $TRAVIS_BUILD_DIR/before.sh
 
 script:
+  - source $TRAVIS_BUILD_DIR/travis_linux_env.sh
   - cd $IRODS_HOME
   - export CFLAGS=-fPIC ; make
   - cd $TRAVIS_BUILD_DIR
 
 after_script:
+  - source $TRAVIS_BUILD_DIR/travis_linux_env.sh
   - sudo -E -u postgres $TRAVIS_BUILD_DIR/irodscontrol psetup
   - $TRAVIS_BUILD_DIR/irodscontrol istart
   - sudo -E -u postgres $TRAVIS_BUILD_DIR/irodscontrol status
