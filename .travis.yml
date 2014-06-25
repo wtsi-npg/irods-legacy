@@ -25,9 +25,7 @@ env:
     - irodsEnvFile=$TRAVIS_BUILD_DIR/irods_env.conf
 
 before_script:
-  - sudo -u postgres createuser -D -r -s icat
-  - sudo -u postgres sh -c "echo ALTER USER icat WITH PASSWORD \'icat\' | psql"
-  - sudo -u postgres sh -c "echo ALTER USER postgres WITH PASSWORD \'$PGPASSWORD\' | psql"
+  - sudo -E -u postgres $TRAVIS_BUILD_DIR/before.sh
 
 script:
   - cd $IRODS_HOME
