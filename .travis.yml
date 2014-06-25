@@ -1,5 +1,60 @@
 before_install:
- - sudo apt-get update -qq
- - sudo apt-get install -qq odbc-postgresql unixodbc-dev
+- sudo apt-get update -qq
+- sudo apt-get install -qq odbc-postgresql unixodbc-dev
 
-script: hostname; cat /etc/hosts; ifconfig; sudo service postgresql stop; cd iRODS; export USE_LOCALHOST=1; ./irodssetup < ../.travis.irodssetup.input; set +e; yes | ./irodsctl devtest; DEVTESTSTATUS=$?; if [ "$DEVTESTSTATUS" != "0" ] ; then cat /home/travis/build/irods/irods/iRODS/installLogs/finishSetup.log; cat /home/travis/build/irods/irods/iRODS/server/log/rodsLog*; cat ~/.irods/.irodsEnv; cat /tmp/testSurvey_*; cat /tmp/icatSurvey_*; cat /home/travis/build/irods/irods/iRODS/server/test/bin/*.log; exit 1; fi;
+language: c
+
+compiler: gcc
+
+env:
+  global:
+    - secure: TnTGMjGO4i2SgcDtqOKADL1/0iHI3SomEDqn2/9+5vepTmOxPTkEYSwgtcvw0HLBnB5rHFvpi5FcUZCXEbe9OuaR2re2nyQFOw5Cz03CB9L4iNwtlE1OUUhCPsKI7skrkhTjDxJ/eXdaKOY2ER6Wt55BzKaQysRSkf6ApJKbFjE=
+
+    - PGHOME=/usr/lib/postgresql/9.1
+    - PGDATA=/var/ramfs/postgresql/9.1/main
+    - PGCONF=/etc/postgresql/9.1/main/postgresql.conf
+    - PGCTL=$PGHOME/bin/pg_ctl
+    - PGPASSWORD=postgres
+    - ODBCINI=$TRAVIS_BUILD_DIR/odbc.ini
+    - IRODS_HOME=$TRAVIS_BUILD_DIR/iRODS
+    - IRODS_AUTH=$TRAVIS_BUILD_DIR/irods_auth.dat
+    - ICAT_CLEAN=$TRAVIS_BUILD_DIR/icat_dump.sql
+    - irodsEnvFile=$TRAVIS_BUILD_DIR/irods_env.conf
+
+before_script:
+
+script: cd $IRODS_HOME ; export CFLAGS=-fPIC ; make
+
+after_script:
+  - sudo -u postgres createuser -D -r -s icat
+  - sudo -u postgres sh -c "echo ALTER USER icat WITH PASSWORD \'icat\' | psql"
+  - sudo -u postgres sh -c "echo ALTER USER postgres WITH PASSWORD \'$PGPASSWORD\' | psql"
+  - sudo -E -u postgres $TRAVIS_BUILD_DIR/irodscontrol psetup
+  - sudo -E -u postgres $TRAVIS_BUILD_DIR/irodscontrol status
+  - cd $TRAVIS_BUILD_DIR ; $TRAVIS_BUILD_DIR/irodscontrol istart
+  - cat $irodsEnvFile
+  - sleep 10
+  - ls -lrt /tmp
+  - ls -lrt $TRAVIS_BUILD_DIR
+  - sudo -E -u postgres $TRAVIS_BUILD_DIR/irodscontrol status
+  - echo irods | script -q -c "$IRODS_HOME/clients/icommands/bin/iinit" > /dev/null
+  - $IRODS_HOME/clients/icommands/bin/ienv
+  - $IRODS_HOME/clients/icommands/bin/ils
+  - cat $IRODS_HOME/server/log/rodsLog.*
+  - $TRAVIS_BUILD_DIR/irodscontrol istop
+
+# after_success: cd $TRAVIS_BUILD_DIR ; tar -c -f irods.tar.gz -z --exclude='*.o' --exclude='*.c' iRODS/
+
+deploy:
+  provider: releases
+  api-key: $GH_OAUTH
+  file: irods.tar.gz
+  skip_cleanup: true
+  on:
+    tags: true
+    condition: "$TRAVIS_BRANCH = travis-build-deploy"
+    branch: travis-build-deploy
+
+branches:
+  only:
+  - travis-build-deploy
