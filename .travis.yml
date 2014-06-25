@@ -12,19 +12,10 @@ addons:
 env:
   global:
     - secure: TnTGMjGO4i2SgcDtqOKADL1/0iHI3SomEDqn2/9+5vepTmOxPTkEYSwgtcvw0HLBnB5rHFvpi5FcUZCXEbe9OuaR2re2nyQFOw5Cz03CB9L4iNwtlE1OUUhCPsKI7skrkhTjDxJ/eXdaKOY2ER6Wt55BzKaQysRSkf6ApJKbFjE=
-
-    - PGHOME=/usr/lib/postgresql/9.3
-    - PGDATA=/var/ramfs/postgresql/9.3/main
-    - PGCONF=/etc/postgresql/9.3/main/postgresql.conf
-    - PGCTL=$PGHOME/bin/pg_ctl
-    - PGPASSWORD=postgres
-    - ODBCINI=$TRAVIS_BUILD_DIR/odbc.ini
-    - IRODS_HOME=$TRAVIS_BUILD_DIR/iRODS
-    - IRODS_AUTH=$TRAVIS_BUILD_DIR/irods_auth.dat
-    - ICAT_CLEAN=$TRAVIS_BUILD_DIR/icat_dump.sql
-    - irodsEnvFile=$TRAVIS_BUILD_DIR/irods_env.conf
+    - PGVERSION="9.3"
 
 before_script:
+  - source $TRAVIS_BUILD_DIR/travis_linux_env.sh
   - sudo -E -u postgres $TRAVIS_BUILD_DIR/before.sh
 
 script:
