@@ -4,15 +4,15 @@
 
 This branch is configured for PostgreSQL:
 
-ICAT database:
+- ICAT database:
 
-PostgreSQL database: ICAT
-PostgreSQL user:     icat
-PostgreSQL pass:     icat
+    - PostgreSQL database: `ICAT`
+    - PostgreSQL user:     `icat`
+    - PostgreSQL pass:     `icat`
 
-iRODS:
+- iRODS:
 
-iRODS user:          irods
-iRODS pass:          irods
+    - iRODS user:          `irods`
+    - iRODS pass:          `irods`
 
 A clean ICAT database dump is provided in the file icat_dump.sql

@@ -6,13 +6,16 @@ language: c
 
 compiler: gcc
 
+addons:
+  postgresql: "9.3"
+
 env:
   global:
     - secure: TnTGMjGO4i2SgcDtqOKADL1/0iHI3SomEDqn2/9+5vepTmOxPTkEYSwgtcvw0HLBnB5rHFvpi5FcUZCXEbe9OuaR2re2nyQFOw5Cz03CB9L4iNwtlE1OUUhCPsKI7skrkhTjDxJ/eXdaKOY2ER6Wt55BzKaQysRSkf6ApJKbFjE=
 
-    - PGHOME=/usr/lib/postgresql/9.1
-    - PGDATA=/var/ramfs/postgresql/9.1/main
-    - PGCONF=/etc/postgresql/9.1/main/postgresql.conf
+    - PGHOME=/usr/lib/postgresql/9.3
+    - PGDATA=/var/ramfs/postgresql/9.3/main
+    - PGCONF=/etc/postgresql/9.3/main/postgresql.conf
     - PGCTL=$PGHOME/bin/pg_ctl
     - PGPASSWORD=postgres
     - ODBCINI=$TRAVIS_BUILD_DIR/odbc.ini
@@ -22,26 +25,25 @@ env:
     - irodsEnvFile=$TRAVIS_BUILD_DIR/irods_env.conf
 
 before_script:
-
-script: cd $IRODS_HOME ; export CFLAGS=-fPIC ; make
-
-after_script:
   - sudo -u postgres createuser -D -r -s icat
   - sudo -u postgres sh -c "echo ALTER USER icat WITH PASSWORD \'icat\' | psql"
   - sudo -u postgres sh -c "echo ALTER USER postgres WITH PASSWORD \'$PGPASSWORD\' | psql"
+
+script:
+  - cd $IRODS_HOME
+  - export CFLAGS=-fPIC ; make
+  - cd $TRAVIS_BUILD_DIR
+
+after_script:
   - sudo -E -u postgres $TRAVIS_BUILD_DIR/irodscontrol psetup
+  - $TRAVIS_BUILD_DIR/irodscontrol istart
   - sudo -E -u postgres $TRAVIS_BUILD_DIR/irodscontrol status
-  - cd $TRAVIS_BUILD_DIR ; $TRAVIS_BUILD_DIR/irodscontrol istart
-  - cat $irodsEnvFile
   - sleep 10
-  - ls -lrt /tmp
-  - ls -lrt $TRAVIS_BUILD_DIR
-  - sudo -E -u postgres $TRAVIS_BUILD_DIR/irodscontrol status
   - echo irods | script -q -c "$IRODS_HOME/clients/icommands/bin/iinit" > /dev/null
   - $IRODS_HOME/clients/icommands/bin/ienv
   - $IRODS_HOME/clients/icommands/bin/ils
-  - cat $IRODS_HOME/server/log/rodsLog.*
   - $TRAVIS_BUILD_DIR/irodscontrol istop
+  - cat $IRODS_HOME/server/log/rodsLog.*
 
 # after_success: cd $TRAVIS_BUILD_DIR ; tar -c -f irods.tar.gz -z --exclude='*.o' --exclude='*.c' iRODS/
 
@@ -52,8 +54,8 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    condition: "$TRAVIS_BRANCH = travis-build-deploy"
-    branch: travis-build-deploy
+    condition: "$TRAVIS_BRANCH = travis-build"
+    branch: travis-build
 
 branches:
   only:
