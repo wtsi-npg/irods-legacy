@@ -16,24 +16,18 @@ env:
 
 before_script:
   - source $TRAVIS_BUILD_DIR/travis_linux_env.sh
-  - sudo -E -u postgres $TRAVIS_BUILD_DIR/before.sh
 
 script:
-  - source $TRAVIS_BUILD_DIR/travis_linux_env.sh
   - cd $IRODS_HOME
   - export CFLAGS=-fPIC ; make
   - cd $TRAVIS_BUILD_DIR
 
 after_script:
-  - source $TRAVIS_BUILD_DIR/travis_linux_env.sh
+  - sudo -E -u postgres $TRAVIS_BUILD_DIR/setup_pgusers.sh
   - sudo -E -u postgres $TRAVIS_BUILD_DIR/irodscontrol psetup
-  - $TRAVIS_BUILD_DIR/irodscontrol istart
-  - sudo -E -u postgres $TRAVIS_BUILD_DIR/irodscontrol status
-  - sleep 10
-  - echo irods | script -q -c "$IRODS_HOME/clients/icommands/bin/iinit" > /dev/null
-  - $IRODS_HOME/clients/icommands/bin/ienv
-  - $IRODS_HOME/clients/icommands/bin/ils
-  - $TRAVIS_BUILD_DIR/irodscontrol istop
+  - $TRAVIS_BUILD_DIR/smoke_test.sh
+
+after_failure:
   - cat $IRODS_HOME/server/log/rodsLog.*
 
 # after_success: cd $TRAVIS_BUILD_DIR ; tar -c -f irods.tar.gz -z --exclude='*.o' --exclude='*.c' iRODS/

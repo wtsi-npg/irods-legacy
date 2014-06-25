@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# The environment for building and testing on Linux
+
 export PGVERSION=${PGVERSION:?PostgreSQL version variable was not set}
 
 export PGHOME=/usr/lib/postgresql/$PGVERSION

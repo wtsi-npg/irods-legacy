@@ -1,6 +1,8 @@
 #!/bin/bash
 
-set -ev
+# Set up the required PostgreSQL user accounts.
+
+set -e
 
 createuser -D -r -s icat
 echo "ALTER USER icat WITH PASSWORD 'icat'" | psql
