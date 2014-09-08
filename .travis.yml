@@ -1,6 +1,6 @@
 before_install:
 - sudo apt-get update -qq
-- sudo apt-get install -qq odbc-postgresql unixodbc-dev
+- sudo apt-get install -qq odbc-postgresql unixodbc-dev git libjansson-dev libjansson4
 
 language: c
 
@@ -23,9 +23,11 @@ script:
   - cd $TRAVIS_BUILD_DIR
 
 after_script:
-  - sudo -E -u postgres $TRAVIS_BUILD_DIR/setup_pgusers.sh
-  - sudo -E -u postgres $TRAVIS_BUILD_DIR/irodscontrol psetup
-  - $TRAVIS_BUILD_DIR/smoke_test.sh
+#  - sudo -E -u postgres $TRAVIS_BUILD_DIR/setup_pgusers.sh
+#  - sudo -E -u postgres $TRAVIS_BUILD_DIR/irodscontrol psetup
+  - git clone https://github.com/wtsi-npg/baton.git baton && cd baton
+  - ../build_baton_release.sh
+#  - $TRAVIS_BUILD_DIR/smoke_test.sh
 
 after_failure:
   - cat $IRODS_HOME/server/log/rodsLog.*
@@ -45,3 +47,6 @@ deploy:
 branches:
   only:
   - travis-build
+
+notifications:
+    email: false
