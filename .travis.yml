@@ -32,7 +32,7 @@ after_failure:
 
 after_success:
   - cd $TRAVIS_BUILD_DIR ; tar -c -f irods.tar.gz -z --exclude='*.o' --exclude='*.c' iRODS/
-   - echo "Will deploy branch $TRAVIS_BRANCH, tag $TRAVIS_TAG, commit $TRAVIS_COMMIT, build $TRAVIS_BUILD_NUMBER"
+  - echo "Will deploy branch $TRAVIS_BRANCH, tag $TRAVIS_TAG, commit $TRAVIS_COMMIT, build $TRAVIS_BUILD_NUMBER"
 
 deploy:
   provider: releases
