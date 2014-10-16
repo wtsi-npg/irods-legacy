@@ -42,4 +42,3 @@ deploy:
   on:
     tags: true
     all-branches: true
-    condition: "$TRAVIS_BRANCH = travis-build"
