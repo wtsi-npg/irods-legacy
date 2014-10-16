@@ -30,7 +30,7 @@ after_script:
 after_failure:
   - cat $IRODS_HOME/server/log/rodsLog.*
 
-# after_success: cd $TRAVIS_BUILD_DIR ; tar -c -f irods.tar.gz -z --exclude='*.o' --exclude='*.c' iRODS/
+after_success: cd $TRAVIS_BUILD_DIR ; tar -c -f irods.tar.gz -z --exclude='*.o' --exclude='*.c' iRODS/
 
 deploy:
   provider: releases
