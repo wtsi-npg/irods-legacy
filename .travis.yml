@@ -41,4 +41,4 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    all-branches: true
+    all_branches: true
