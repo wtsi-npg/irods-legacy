@@ -31,13 +31,13 @@ after_failure:
   - cat $IRODS_HOME/server/log/rodsLog.*
 
 after_success:
-  - cd $TRAVIS_BUILD_DIR ; tar -c -f irods.tar.gz -z --exclude='*.o' --exclude='*.c' iRODS/
+  - cd /tmp ; tar -c -f irods.tar.gz -z --exclude='*.o' --exclude='*.c' $TRAVIS_BUILD_DIR
   - echo "Will deploy branch $TRAVIS_BRANCH, tag $TRAVIS_TAG, commit $TRAVIS_COMMIT, build $TRAVIS_BUILD_NUMBER"
 
 deploy:
   provider: releases
   api-key: $GH_OAUTH
-  file: irods.tar.gz
+  file: /tmp/irods.tar.gz
   skip_cleanup: true
   on:
     tags: true
