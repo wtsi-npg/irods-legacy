@@ -25,6 +25,8 @@ script:
 after_script:
   - sudo -E -u postgres $TRAVIS_BUILD_DIR/setup_pgusers.sh
   - sudo -E -u postgres $TRAVIS_BUILD_DIR/irodscontrol psetup
+  - sudo mkdir -p /usr/local/var/lib/irods/Vault
+  - sudo chown $USER:$USER /usr/local/var/lib/irods/Vault
   - $TRAVIS_BUILD_DIR/smoke_test.sh
 
 after_failure:

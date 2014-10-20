@@ -922,7 +922,7 @@ COPY r_resc_group (resc_group_id, resc_group_name, resc_id, create_ts, modify_ts
 
 COPY r_resc_main (resc_id, resc_name, zone_name, resc_type_name, resc_class_name, resc_net, resc_def_path, free_space, free_space_ts, resc_info, r_comment, resc_status, create_ts, modify_ts) FROM stdin;
 9100	bundleResc	tempZone	unix file system	bundle	localhost	/bundle						1250100000	1250100000
-10010	tempResc	tempZone	unix file system	archive	localhost	/usr/local/lib/irods/Vault	\N	\N	\N	\N	\N	01403088603	01403088603
+10010	tempResc	tempZone	unix file system	archive	localhost	/usr/local/var/lib/irods/Vault	\N	\N	\N	\N	\N	01403088603	01403088603
 \.
 
 
