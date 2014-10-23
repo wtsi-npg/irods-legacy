@@ -34,7 +34,7 @@ after_failure:
 
 after_success:
   - cd $TRAVIS_BUILD_DIR
-  - tar -c -f /tmp/irods.tar.gz -z --exclude ./git --exclude ./CVSROOT --exclude README.md --exclude .travis.yml --exclude='*.o' --exclude='*.c' .
+  - tar -c -f /tmp/irods.tar.gz -z --exclude ./.git --exclude ./CVSROOT --exclude README.md --exclude .travis.yml --exclude='*.o' --exclude='*.c' .
   - echo "branch '$TRAVIS_BRANCH', tag '$TRAVIS_TAG', commit '$TRAVIS_COMMIT', build '$TRAVIS_BUILD_NUMBER'"
 
 deploy:
