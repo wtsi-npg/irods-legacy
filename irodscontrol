@@ -172,6 +172,16 @@ start_irods() {
         export irodsEnvFile=$conf
         cd $IRODS_HOME/server/bin
         ./$IRODS_SERVER
+
+        exit_code=$?
+
+        sleep 5
+        if irods_running
+        then
+            echo "iRODS server listening on port" $IRODS_PORT
+        else
+            echo "iRODS server failed to start. Exited with code" $exit_code
+        fi
     fi
 }
 
@@ -180,7 +190,7 @@ stop_irods() {
 
     if irods_running
     then
-        echo "Stopping iRODS with" $conf
+        echo "Stopping iRODS server with" $conf
         local pid=`sed -e 's/\([0-9]*\).*/\1/' < $IRODS_PID`
         echo "Killing iRODS server process group" $pid
 
@@ -229,6 +239,28 @@ pstop() {
     return $ret
 }
 
+istatus() {
+    if irods_running
+    then
+        echo "iRODS is running on port" $IRODS_PORT
+        return 0
+    else
+        echo "iRODS is not running"
+        return 1
+    fi
+}
+
+pstatus() {
+    if postgresql_running
+    then
+        echo "PostgreSQL is running on port" $PGPORT
+        return 0
+    else
+        echo "PostgreSQL is not running"
+        return 1
+    fi
+}
+
 psetup() {
     setup_database
 }
@@ -250,19 +282,8 @@ stop() {
 }
 
 status() {
-    if postgresql_running
-    then
-        echo "PostgreSQL is running on port" $PGPORT
-    else
-        echo "PostgreSQL is not running"
-    fi
-
-    if irods_running
-    then
-        echo "iRODS is running on port" $IRODS_PORT
-    else
-        echo "iRODS is not running"
-    fi
+    pstatus
+    istatus
 }
 
 restart() {
@@ -311,6 +332,14 @@ case "$1" in
         status
         ;;
 
+    istatus)
+        istatus
+        ;;
+
+    pstatus)
+        pstatus
+        ;;
+
     restart)
         restart
         ;;
@@ -337,22 +366,24 @@ Start and stop PostgreSQL and iRODS servers with custom settings and
 ICAT database, particularly for testing.
 
  Usage: { start | stop | restart | status | setup | teardown |
-          pstart | pstop | psetup | pteardown
-          istart | istop }
+          pstart | pstop | pstatus | psetup | pteardown
+          istart | istop | istatus }
 
-  start:     Start ICAT, start iRODS
+  start:     Start PostgreSQL, start iRODS
   stop:      Stop iRODS, stop PostreSQL
   restart:   stop, start
-  status:    Report status
+  status:    Report status (exits 0 if both running)
 
   setup:     Load ICAT, start iRODS
   teardown:  Stop iRODS, dump ICAT
 
   istart:    Start iRODS
   istop:     Stop iRODS
+  istatus:   Report iRODS status (exits 0 if running)
 
   pstart:    Start PostgreSQL
   pstop:     Stop PostgreSQL
+  pstatus:   Report PostgreSQL status (exits 0 if running)
 
   psetup:    Load ICAT
   pteardown: Dump ICAT
@@ -372,7 +403,7 @@ use the { setup, teardown } operations.
   PGPORT     : The PostgreSQL port           [5432]
   PGUSER     : The PostgreSQL user           [$USER]
 
-  PGDATABASE : The PostgreSQL ICAT database         [test]
+  PGDATABASE : The PostgreSQL ICAT database         [ICAT]
   INDUMP     : The clean ICAT database dump to load [icat_clean.sql]
   OUTDUMP    : The dirty ICAT database dump to make [icat dirty.sql]
 
