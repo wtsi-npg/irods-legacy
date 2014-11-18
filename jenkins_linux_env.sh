@@ -2,7 +2,7 @@
 
 # The environment for building and testing on Linux under Jenkins
 
-set -e
+set +e
 
 export JENKINS_PGDATA=${JENKINS_PGDATA:?Jenkins PostgreSQL data variable was not set}
 
