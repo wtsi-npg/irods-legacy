@@ -1553,7 +1553,8 @@ int definitelyEq(Res *a, Res *b) {
 			if(a->degree == b->degree) {
 				if(a->text == b->text || strcmp(a->text, b->text) == 0) {
 					int res = 1;
-					for(int i=0;i<a->degree;i++) {
+                    int i;
+					for(i=0;i<a->degree;i++) {
 						if(!definitelyEq(a->subtrees[i], b->subtrees[i])) {
 							res = 0;
 							break;
@@ -1566,7 +1567,8 @@ int definitelyEq(Res *a, Res *b) {
 		case T_TUPLE:
 			if(a->degree == b->degree) {
 				int res = 1;
-				for(int i=0;i<a->degree;i++) {
+                int i;
+				for(i=0;i<a->degree;i++) {
 					if(!definitelyEq(a->subtrees[i], b->subtrees[i])) {
 						res = 0;
 						break;
